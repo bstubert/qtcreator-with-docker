@@ -1,2 +1,2 @@
 #!/bin/bash
-docker run --rm -v /public/Work:/public/Work -v/tmp:/tmp -w $(pwd) qt-ubuntu-18.04-ryzen cmake $@
+docker run --rm -v /public/Work:/public/Work -v /tmp:/tmp -w $(pwd) qt-ubuntu-18.04-ryzen cmake $@
