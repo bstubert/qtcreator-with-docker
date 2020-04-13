@@ -3,7 +3,7 @@ cmake_minimum_required(VERSION 3.5)
 
 project(SimpleApp)
 
-option(DEPLOY_QT "Deploy Qt to the target system" ON)
+option(DEPLOY_QT "Deploy Qt to the target system." ON)
 
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
@@ -42,16 +42,6 @@ target_link_libraries(${PROJECT_NAME}
     Qt5::Gui Qt5::Qml Qt5::Quick
 )
 
-install(TARGETS ${PROJECT_NAME} RUNTIME
-    DESTINATION bin)
-
-set(qt_base_dir ${Qt5Core_DIR}/../../..)
-install(DIRECTORY ${qt_base_dir}/lib ${qt_base_dir}/phrasebooks
-    ${qt_base_dir}/plugins ${qt_base_dir}/qml ${qt_base_dir}/translations
-    DESTINATION qt USE_SOURCE_PERMISSIONS)
-
-message(STATUS "qt_base_dir = ${qt_base_dir}")
-
 macro(add_deployment_file SRC DEST)
     file(RELATIVE_PATH relSrc ${CMAKE_SOURCE_DIR} ${SRC})
     file(APPEND "${CMAKE_BINARY_DIR}/QtCreatorDeployment.txt"
@@ -67,13 +57,20 @@ macro(add_deployment_directory SRC DEST)
     endforeach(filename)
 endmacro()
 
-set(target_install_prefix "/home/benutzer/MyComp")
+install(TARGETS ${PROJECT_NAME} RUNTIME
+    DESTINATION bin)
 
+set(target_install_prefix "/home/benutzer/MyComp")
 file(WRITE "${CMAKE_BINARY_DIR}/QtCreatorDeployment.txt"
      "${target_install_prefix}\n")
-
 add_deployment_file(${CMAKE_INSTALL_PREFIX}/bin/${PROJECT_NAME} bin)
+
 if(DEPLOY_QT)
+    set(qt_base_dir ${Qt5Core_DIR}/../../..)
+    install(DIRECTORY ${qt_base_dir}/lib ${qt_base_dir}/phrasebooks
+        ${qt_base_dir}/plugins ${qt_base_dir}/qml ${qt_base_dir}/translations
+        DESTINATION qt USE_SOURCE_PERMISSIONS)
+
     add_deployment_directory("${qt_base_dir}/lib" "qt/lib")
     add_deployment_directory("${qt_base_dir}/phrasebooks" "qt/phrasebooks")
     add_deployment_directory("${qt_base_dir}/plugins" "qt/plugins")
