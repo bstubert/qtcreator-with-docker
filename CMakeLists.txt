@@ -3,6 +3,8 @@ cmake_minimum_required(VERSION 3.5)
 
 project(SimpleApp)
 
+option(DEPLOY_QT "Deploy Qt to the target system" ON)
+
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 set(CMAKE_INCLUDE_CURRENT_DIR ON)
@@ -71,8 +73,10 @@ file(WRITE "${CMAKE_BINARY_DIR}/QtCreatorDeployment.txt"
      "${target_install_prefix}\n")
 
 add_deployment_file(${CMAKE_INSTALL_PREFIX}/bin/${PROJECT_NAME} bin)
-add_deployment_directory("${qt_base_dir}/lib" "qt/lib")
-add_deployment_directory("${qt_base_dir}/phrasebooks" "qt/phrasebooks")
-add_deployment_directory("${qt_base_dir}/plugins" "qt/plugins")
-add_deployment_directory("${qt_base_dir}/qml" "qt/qml")
-add_deployment_directory("${qt_base_dir}/translations" "qt/translations")
+if(DEPLOY_QT)
+    add_deployment_directory("${qt_base_dir}/lib" "qt/lib")
+    add_deployment_directory("${qt_base_dir}/phrasebooks" "qt/phrasebooks")
+    add_deployment_directory("${qt_base_dir}/plugins" "qt/plugins")
+    add_deployment_directory("${qt_base_dir}/qml" "qt/qml")
+    add_deployment_directory("${qt_base_dir}/translations" "qt/translations")
+endif()
