@@ -43,15 +43,26 @@ target_link_libraries(${PROJECT_NAME}
 install(TARGETS ${PROJECT_NAME} RUNTIME
     DESTINATION bin)
 
-#set(qt_base_dir ${Qt5Core_DIR}/../../..)
-#install(DIRECTORY ${qt_base_dir}/lib ${qt_base_dir}/phrasebooks
-#    ${qt_base_dir}/plugins ${qt_base_dir}/qml ${qt_base_dir}/translations
-#    DESTINATION qt USE_SOURCE_PERMISSIONS)
+set(qt_base_dir ${Qt5Core_DIR}/../../..)
+install(DIRECTORY ${qt_base_dir}/lib ${qt_base_dir}/phrasebooks
+    ${qt_base_dir}/plugins ${qt_base_dir}/qml ${qt_base_dir}/translations
+    DESTINATION qt USE_SOURCE_PERMISSIONS)
+
+message(STATUS "qt_base_dir = ${qt_base_dir}")
 
 macro(add_deployment_file SRC DEST)
     file(RELATIVE_PATH relSrc ${CMAKE_SOURCE_DIR} ${SRC})
     file(APPEND "${CMAKE_BINARY_DIR}/QtCreatorDeployment.txt"
         "${relSrc}:${DEST}\n")
+endmacro()
+
+macro(add_deployment_directory SRC DEST)
+    file(GLOB_RECURSE files "${SRC}/*")
+    foreach(filename ${files})
+        get_filename_component(path ${filename} PATH)
+        file(RELATIVE_PATH path ${SRC} ${path})
+        add_deployment_file("${filename}" "${DEST}/${path}")
+    endforeach(filename)
 endmacro()
 
 set(target_install_prefix "/home/benutzer/MyComp")
@@ -60,3 +71,8 @@ file(WRITE "${CMAKE_BINARY_DIR}/QtCreatorDeployment.txt"
      "${target_install_prefix}\n")
 
 add_deployment_file(${CMAKE_INSTALL_PREFIX}/bin/${PROJECT_NAME} bin)
+add_deployment_directory("${qt_base_dir}/lib" "qt/lib")
+add_deployment_directory("${qt_base_dir}/phrasebooks" "qt/phrasebooks")
+add_deployment_directory("${qt_base_dir}/plugins" "qt/plugins")
+add_deployment_directory("${qt_base_dir}/qml" "qt/qml")
+add_deployment_directory("${qt_base_dir}/translations" "qt/translations")
